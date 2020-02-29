@@ -4,7 +4,7 @@
 
     <el-form :inline="true" ref="form" :model="listQuery" label-width="80px" @submit.native.prevent="onSubmit">
       <el-form-item label="用户名称">
-        <el-input v-model="listQuery.name" size="small"></el-input>
+        <el-input v-model.trim="listQuery.name" size="small"></el-input>
       </el-form-item>
       <el-form-item>
         <!-- @click="onSubmit" -->
