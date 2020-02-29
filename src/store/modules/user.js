@@ -1,4 +1,9 @@
-import { login, logout, getInfo } from '@/api/user'
+import {
+  login,
+  logout,
+  getInfo,
+  getList,
+} from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -85,7 +90,35 @@ const actions = {
       commit('RESET_STATE')
       resolve()
     })
-  }
+  },
+
+  getList({
+    commit,
+    state
+  }) {
+    return new Promise((resolve, reject) => {
+      getList(state.token).then(response => {
+        const {
+          data
+        } = response
+
+        if (!data) {
+          reject('Verification failed, please Login again.')
+        }
+
+        const {
+          name,
+          avatar
+        } = data
+
+        commit('SET_NAME', name)
+        commit('SET_AVATAR', avatar)
+        resolve(data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
 }
 
 export default {
