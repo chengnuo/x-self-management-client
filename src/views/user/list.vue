@@ -2,12 +2,13 @@
 <template>
   <div class="userList">
 
-    <el-form :inline="true" ref="form" :model="listQuery" label-width="80px">
+    <el-form :inline="true" ref="form" :model="listQuery" label-width="80px" @submit.native.prevent="onSubmit">
       <el-form-item label="用户名称">
         <el-input v-model="listQuery.name" size="small"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit" size="small">查询</el-button>
+        <!-- @click="onSubmit" -->
+        <el-button type="primary" size="small" native-type="submit">查询</el-button>
       </el-form-item>
     </el-form>
     <div class="block">
@@ -132,7 +133,8 @@ export default {
     },
 
     // 查询
-    onSubmit(){
+    onSubmit(e){
+      e.preventDefault();
       this.$router.push({
         query: Object.assign({}, this.listQuery )
       })
