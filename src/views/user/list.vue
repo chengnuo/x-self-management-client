@@ -1,6 +1,15 @@
 <!-- 用户模块 -->
 <template>
   <div class="userList">
+
+    <el-form :inline="true" ref="form" :model="listQuery" label-width="80px">
+      <el-form-item label="用户名称">
+        <el-input v-model="listQuery.name" size="small"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="onSubmit" size="small">查询</el-button>
+      </el-form-item>
+    </el-form>
     <div class="block">
       <el-pagination class="paging"
                      background
@@ -77,10 +86,6 @@ export default {
     fetchData() {
       
       this.listLoading = true
-      // limit: toInt(ctx.query.limit),
-      // offset: toInt(ctx.query.offset),
-      
-      console.log('this.router', this.$route.query)
 
       const query = this.$route.query || {}
 
@@ -91,10 +96,11 @@ export default {
         this.listQuery.limit = Number(query.limit) || 10
       }
 
-      getList(Object.assign({}, this.listQuery, {
+      const listQuery = Object.assign({}, this.listQuery, {
         offset: query.offset,
         limit: query.limit,
-      })).then(response => {
+      })
+      getList(listQuery).then(response => {
         console.log('response', response)
         this.list = response.data
         this.total = response.total;
@@ -121,6 +127,14 @@ export default {
         query: Object.assign({}, this.listQuery ,{
           offset: val,
         })
+      })
+      this.init()
+    },
+
+    // 查询
+    onSubmit(){
+      this.$router.push({
+        query: Object.assign({}, this.listQuery )
       })
       this.init()
     },
