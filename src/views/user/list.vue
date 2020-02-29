@@ -7,7 +7,7 @@
                      @size-change="handleSizeChange"
                      @current-change="handleCurrentChange"
                      :current-page="listQuery.offset"
-                     :page-sizes="[10, 100, 200, 300, 400]"
+                     :page-sizes="pageSizes"
                      :page-size="listQuery.limit"
                      layout="total, sizes, prev, pager, next, jumper"
                      :total="total" />
@@ -32,7 +32,7 @@
                      @size-change="handleSizeChange"
                      @current-change="handleCurrentChange"
                      :current-page="listQuery.offset"
-                     :page-sizes="[10, 100, 200, 300, 400]"
+                     :page-sizes="pageSizes"
                      :page-size="listQuery.limit"
                      layout="total, sizes, prev, pager, next, jumper"
                      :total="total" />
@@ -55,6 +55,7 @@ export default {
       // offset: toInt(ctx.query.offset),
       list: [],
       total: 0,
+      pageSizes: [10, 100, 200, 300, 400],
       listQuery: {
         offset: 1,
         limit: 10
@@ -83,10 +84,10 @@ export default {
 
       const query = this.$route.query || {}
 
-      if(query.offset){
+      if(this.pageSizes.includes(Number(query.offset))){
         this.listQuery.offset = Number(query.offset) || 1
       }
-      if(query.limit){
+      if(this.pageSizes.includes(Number(query.limit))){
         this.listQuery.limit = Number(query.limit) || 10
       }
 
