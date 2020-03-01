@@ -90,9 +90,11 @@ export default {
 
       const query = this.$route.query || {}
 
-      if(this.pageSizes.includes(Number(query.offset))){
+      // 页码当前页设置
+      if(query.offset){
         this.listQuery.offset = Number(query.offset) || 1
       }
+      // 页码每页条数设置，做判断是为了不随便搜索
       if(this.pageSizes.includes(Number(query.limit))){
         this.listQuery.limit = Number(query.limit) || 10
       }
