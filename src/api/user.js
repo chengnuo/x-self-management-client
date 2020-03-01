@@ -16,6 +16,31 @@ export function getList(data) {
     data
   })
 }
+// 创建
+export function create(data) {
+  return request({
+    url: '/user/create',
+    method: 'post',
+    data
+  })
+}
+// 更新
+export function update(data) {
+  return request({
+    url: '/user/update',
+    method: 'post',
+    data
+  })
+}
+// 删除
+export function destroy(data) {
+  return request({
+    url: '/user/destroy',
+    method: 'post',
+    data
+  })
+}
+
 
 export function getInfo(token) {
   return request({
