@@ -21,7 +21,7 @@
           </el-form-item>
           <el-form-item label="手机号码"
                         prop="phone">
-            <el-input v-model="ruleForm.phone" clearable></el-input>
+            <el-input v-model="ruleForm.phone" clearable :disabled="listItem.id?true:false"></el-input>
           </el-form-item>
           <el-form-item label="头像"
                         prop="avatarUrl">
@@ -34,19 +34,11 @@
           </el-form-item>
         </el-form>
       </div>
-      <!-- <span slot="footer"
-            class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary"
-                   @click="dialogVisible = false">确 定</el-button>
-      </span> -->
     </el-dialog>
   </div>
 </template>
 
 <script>
-
-
 import { create, update } from '@/api/user'
 
 export default {
@@ -63,7 +55,6 @@ export default {
   },
   data() {
     return {
-      // dialogVisible: true
       ruleForm: {
         name: '',
         phone: '',
@@ -87,22 +78,15 @@ export default {
       get() {
         return this.visible
       },
-
       set(val) {
         this.$emit('update:visible', val)
       }
     }
   },
   created() {
-    // this.fetchData()
-  },
-  updated() {
-    console.log('visible', this.dialogVisible)
-    console.log('listItem', this.listItem)
   },
   methods: {
     init() {
-      // this.fetchData()
       this.initData();
     },
     // 重置
@@ -126,7 +110,7 @@ export default {
       let ruleForm = Object.assign({}, this.ruleForm)
       create(ruleForm).then(response => {
         this.handleClose(); // 关闭弹出层
-        this.$emit('fetchData'); // 刷新列表
+        this.$emit('fetchIndex'); // 刷新列表
       })
     },
     // 更新api
@@ -136,7 +120,7 @@ export default {
       })
       update(ruleForm).then(response => {
         this.handleClose(); // 关闭弹出层
-        this.$emit('fetchData'); // 刷新列表
+        this.$emit('fetchIndex'); // 刷新列表
       })
     },
     // 关闭弹出层
@@ -152,9 +136,7 @@ export default {
           }else{
             this.apiCreate();
           }
-          
         } else {
-          console.log('error submit!!');
           return false;
         }
       });

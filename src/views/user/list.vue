@@ -1,7 +1,6 @@
 <!-- 用户模块-列表 -->
 <template>
   <div class="userList">
-
     <el-form :inline="true"
              ref="form"
              :model="listQuery"
@@ -13,7 +12,6 @@
                   clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <!-- @click="onSubmit" -->
         <el-button type="primary"
                    size="small"
                    native-type="submit">查询</el-button>
@@ -42,9 +40,9 @@
         <template slot-scope="scope">
           <el-button type="text"
                      size="small"
-                     @click="handleEditor(scope.row)">编辑</el-button>
+                     @click="handleUpdate(scope.row)">编辑</el-button>
           <el-popconfirm title="这是一段内容确定删除吗？"
-                         @onConfirm="handleDelete(scope.row)">
+                         @onConfirm="handleDestory(scope.row)">
             <el-button slot="reference"
                        type="text"
                        size="small">删除</el-button>
@@ -81,12 +79,10 @@
                      :page-size="listQuery.limit"
                      layout="total, sizes, prev, pager, next, jumper"
                      :total="total" />
-      </el-pagination>
     </div>
-
     <!-- 编辑 -->
     <UserEditor :visible.sync="dialogUserEditor"
-                @fetchData="fetchData"
+                @fetchIndex="fetchIndex"
                 :listItem="listItem" />
   </div>
 </template>
@@ -94,7 +90,7 @@
 <script>
 
 
-import { getList, destroy } from '@/api/user'
+import { index, destroy, show } from '@/api/user'
 import UserEditor from '@/components/User/Editor'
 
 export default {
@@ -104,16 +100,15 @@ export default {
   },
   data() {
     return {
-
-      // limit: toInt(ctx.query.limit),
-      // offset: toInt(ctx.query.offset),
       list: [],
       listItem: {},
       total: 0,
       pageSizes: [10, 100, 200, 300, 400],
+      // 请求参数
       listQuery: {
         offset: 1,
-        limit: 10
+        limit: 10,
+        name: '',
       },
       dialogUserEditor: false,
     }
@@ -128,14 +123,11 @@ export default {
   },
   methods: {
     init() {
-      this.fetchData()
+      this.fetchIndex()
     },
-    fetchData() {
-
+    fetchIndex() {
       this.listLoading = true
-
       const query = this.$route.query || {}
-
       // 页码当前页设置
       if (query.offset) {
         this.listQuery.offset = Number(query.offset) || 1
@@ -144,13 +136,11 @@ export default {
       if (this.pageSizes.includes(Number(query.limit))) {
         this.listQuery.limit = Number(query.limit) || 10
       }
-
       const listQuery = Object.assign({}, this.listQuery, {
         offset: query.offset,
         limit: query.limit,
       })
-      getList(listQuery).then(response => {
-        console.log('response', response)
+      index(listQuery).then(response => {
         this.list = response.data
         this.total = response.total;
         this.listLoading = false
@@ -168,7 +158,6 @@ export default {
       })
       this.init()
     },
-
     // 分页
     handleCurrentChange(val) {
       this.listQuery.offset = val
@@ -179,7 +168,6 @@ export default {
       })
       this.init()
     },
-
     // 查询
     onSubmit(e) {
       e.preventDefault();
@@ -188,20 +176,18 @@ export default {
       })
       this.init()
     },
-
     // 新增
     handleCreate() {
       this.dialogUserEditor = true;
       this.listItem = {};
     },
     // 更新
-    handleEditor(row) {
+    handleUpdate(row) {
       this.dialogUserEditor = true;
       this.listItem = row;
     },
     // 删除-逻辑删除
-    handleDelete(row) {
-      console.log('handleDelete')
+    handleDestory(row) {
       const listQuery = Object.assign({}, {
         id: row.id,
         deletedAt: 1,
