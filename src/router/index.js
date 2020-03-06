@@ -89,7 +89,7 @@ export const constantRoutes = [
       component: () => import('@/views/npmjs/list'),
       meta: {
         title: 'npmjs列表',
-        icon: ''
+        icon: ' '
       }
     }]
   },
