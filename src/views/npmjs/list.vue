@@ -16,11 +16,19 @@
                    size="small"
                    native-type="submit">查询</el-button>
       </el-form-item>
-      <el-form-item class="fr">
-        <el-button type="primary"
-                   size="small"
-                   @click="handleCreate">新增</el-button>
-      </el-form-item>
+      <div class="fr">
+        <el-form-item >
+          <el-button type="primary"
+                    size="small"
+                    @click="handleCreate">新增</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary"
+                    size="small"
+                    @click="handleDownload">导出</el-button>
+
+        </el-form-item>
+      </div>
     </el-form>
     <div class="block">
       <el-pagination class="paging"
@@ -51,14 +59,17 @@
         </template>
       </el-table-column>
       <el-table-column prop="name"
-                       label="名称" width="100" />
+                       label="名称"
+                       width="100" />
       <el-table-column prop="description"
-                       label="描述" width="500" />
+                       label="描述"
+                       width="500" />
       <el-table-column prop="url"
                        label="地址">
         <template slot-scope="scope">
           <div>
-            <a :href="scope.row.url" target="_blank">
+            <a :href="scope.row.url"
+               target="_blank">
               <el-button slot="reference"
                          type="text"
                          size="small">{{scope.row.url}}
@@ -115,6 +126,7 @@ export default {
         name: '',
       },
       dialogUserEditor: false,
+      filename: 'npmjs',
     }
   },
   computed: {
@@ -204,6 +216,33 @@ export default {
         });
         this.init();
       })
+    },
+
+    handleDownload() {
+      this.downloadLoading = true
+      import('../../../vendor/Export2Excel').then(excel => {
+        const tHeader = ['Id', '名称', '描述', '地址']
+        const filterVal = ['id', 'name', 'description', 'url']
+        const list = this.list
+        const data = this.formatJson(filterVal, list)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: this.filename,
+          autoWidth: this.autoWidth,
+          bookType: this.bookType
+        })
+        this.downloadLoading = false
+      })
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => {
+        if (j === 'timestamp') {
+          return parseTime(v[j])
+        } else {
+          return v[j]
+        }
+      }))
     },
   },
 }
