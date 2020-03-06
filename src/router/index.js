@@ -74,6 +74,25 @@ export const constantRoutes = [
     }
     ]
   },
+  {
+    path: '/npmjs',
+    component: Layout,
+    redirect: '/npmjs/npmjs',
+    name: 'Npmjs',
+    meta: {
+      title: 'npmjs管理',
+      icon: ''
+    },
+    children: [{
+      path: 'list',
+      name: 'NpmjsList',
+      component: () => import('@/views/npmjs/list'),
+      meta: {
+        title: 'npmjs列表',
+        icon: ''
+      }
+    }]
+  },
 
   // {
   //   path: '/example',
