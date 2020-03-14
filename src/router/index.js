@@ -77,7 +77,7 @@ export const constantRoutes = [
   {
     path: '/npmjs',
     component: Layout,
-    redirect: '/npmjs/npmjs',
+    redirect: '/npmjs/list',
     name: 'Npmjs',
     meta: {
       title: 'npmjs管理',
@@ -89,6 +89,25 @@ export const constantRoutes = [
       component: () => import('@/views/npmjs/list'),
       meta: {
         title: 'npmjs列表',
+        icon: 'el-icon-tickets'
+      }
+    }]
+  },
+  {
+    path: '/project',
+    component: Layout,
+    redirect: '/project/list',
+    name: 'Project',
+    meta: {
+      title: '项目管理',
+      icon: ''
+    },
+    children: [{
+      path: 'list',
+      name: 'ProjectList',
+      component: () => import('@/views/project/list'),
+      meta: {
+        title: '项目列表',
         icon: 'el-icon-tickets'
       }
     }]
