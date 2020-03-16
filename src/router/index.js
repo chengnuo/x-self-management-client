@@ -113,6 +113,26 @@ export const constantRoutes = [
     }]
   },
 
+  {
+    path: '/foot',
+    component: Layout,
+    redirect: '/foot/list',
+    name: 'Foot',
+    meta: {
+      title: '项目管理',
+      icon: ''
+    },
+    children: [{
+      path: 'list',
+      name: 'FootList',
+      component: () => import('@/views/foot/list'),
+      meta: {
+        title: '美食',
+        icon: 'el-icon-tickets'
+      }
+    }]
+  },
+
   // {
   //   path: '/example',
   //   component: Layout,

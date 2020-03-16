@@ -1,6 +1,6 @@
 <!-- 用户模块-编辑 -->
 <template>
-  <div class="npmjsEditor">
+  <div class="footEditor">
     <el-dialog :title="`${listItem.id?'编辑':'新增'}`"
                :visible.sync="dialogVisible"
                width="600px"
@@ -42,10 +42,10 @@
 </template>
 
 <script>
-import { create, update } from '@/api/npmjs'
+import { create, update } from '@/api/foot'
 
 export default {
-  name: 'NpmjsEditor',
+  name: 'FootEditor',
   props: {
     visible: {
       type: Boolean,
@@ -154,7 +154,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.npmjsEditor {
+.footEditor {
   padding: 20px;
 }
 </style>
