@@ -17,15 +17,15 @@
                    native-type="submit">查询</el-button>
       </el-form-item>
       <div class="fr">
-        <el-form-item >
+        <el-form-item>
           <el-button type="primary"
-                    size="small"
-                    @click="handleCreate">新增</el-button>
+                     size="small"
+                     @click="handleCreate">新增</el-button>
         </el-form-item>
         <el-form-item>
           <el-button type="primary"
-                    size="small"
-                    @click="handleDownload">导出</el-button>
+                     size="small"
+                     @click="handleDownload">导出</el-button>
 
         </el-form-item>
       </div>
@@ -63,7 +63,13 @@
                        width="100" />
       <el-table-column prop="description"
                        label="描述"
-                       width="500" />
+                       width="500" >
+                       <template slot-scope="scope">
+                         <div :id="`description${scope.row.id}`">
+                           {{scope.row.description}}
+                         </div>
+                       </template>
+      </el-table-column>
       <el-table-column prop="url"
                        label="地址">
         <template slot-scope="scope">
@@ -99,6 +105,31 @@
     <UserEditor :visible.sync="dialogUserEditor"
                 @fetchIndex="fetchIndex"
                 :listItem="listItem" />
+
+    <!-- <div class="editor-container">
+      <el-tag class="tag-title">
+        I18n:
+      </el-tag>
+      <el-alert :closable="false"
+                title="You can change the language of the admin system to see the effect"
+                type="success" />
+      <MarkdownEditor ref="markdownEditor"
+                       v-model="content4"
+                       :language="language"
+                       height="300px"
+                        />
+    </div>
+
+    <el-button style="margin-top:80px;"
+               type="primary"
+               icon="el-icon-document"
+               @click="getHtml">
+      Get HTML
+    </el-button>
+    <div v-html="html" />
+
+    <div id="test">1</div> -->
+
   </div>
 </template>
 
@@ -108,10 +139,26 @@
 import { index, destroy, show } from '@/api/foot'
 import UserEditor from '@/components/Foot/Editor'
 
+
+import MarkdownEditor from '@/components/MarkdownEditor'
+
+import Editor from 'tui-editor'
+import Viewer from 'tui-editor/dist/tui-editor-Viewer';
+
+const content = `
+**This is test**
+
+* vue
+* element
+* webpack
+
+`
+
 export default {
   name: 'FootList',
   components: {
     UserEditor,
+    MarkdownEditor,
   },
   data() {
     return {
@@ -127,21 +174,51 @@ export default {
       },
       dialogUserEditor: false,
       filename: 'foot',
+      content4: content,
+      html: '',
+      languageTypeList: {
+        'en': 'en_US',
+        'zh': 'zh_CN',
+        'es': 'es_ES'
+      },
     }
   },
   computed: {
-    message() {
-      return 'The webmaster said that you can not enter this page...'
+    language() {
+      return this.languageTypeList['zh']
     }
   },
-  created() {
-    this.init()
+  mounted () {
+    // this.init()
+    this.fetchIndex(()=>{
+      console.log(this.list)
+      setTimeout(() => {
+        this.list.map((item)=>{
+          var editor = new Viewer({
+            el: document.querySelector(`#description${item.id}`),
+            height: '300px',
+            initialValue: item.description,
+          });
+          return true
+        })
+        
+      }, 1);
+      
+      
+    })
+      
+    
+    
   },
   methods: {
     init() {
       this.fetchIndex()
     },
-    fetchIndex() {
+    getHtml() {
+      this.html = this.$refs.markdownEditor.getHtml()
+      console.log(this.html)
+    },
+    fetchIndex(callback) {
       this.listLoading = true
       const query = this.$route.query || {}
       // 页码当前页设置
@@ -160,6 +237,7 @@ export default {
         this.list = response.data
         this.total = response.total;
         this.listLoading = false
+        callback && callback();
       })
     },
     // 分页大小

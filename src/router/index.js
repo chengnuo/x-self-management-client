@@ -119,7 +119,7 @@ export const constantRoutes = [
     redirect: '/foot/list',
     name: 'Foot',
     meta: {
-      title: '项目管理',
+      title: '美食管理',
       icon: ''
     },
     children: [{
@@ -132,6 +132,26 @@ export const constantRoutes = [
       }
     }]
   },
+
+  // {
+  //   path: '/healthMedicine',
+  //   component: Layout,
+  //   redirect: '/healthMedicine/list',
+  //   name: 'Foot',
+  //   meta: {
+  //     title: '健康医药管理',
+  //     icon: ''
+  //   },
+  //   children: [{
+  //     path: 'list',
+  //     name: 'FootList',
+  //     component: () => import('@/views/healthMedicine/list'),
+  //     meta: {
+  //       title: '健康医药',
+  //       icon: 'el-icon-tickets'
+  //     }
+  //   }]
+  // },
 
   // {
   //   path: '/example',

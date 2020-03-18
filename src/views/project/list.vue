@@ -70,52 +70,58 @@
                        label="更新时间" />
     </el-table> -->
 
-    <el-row :gutter="20">
-      <el-col :span="12"
-              v-for="item in list"
-              :key="item.id">
-        <el-card class="box-card">
-          <div slot="header"
-               class="clearfix">
-            <span>{{item.name}}</span>
-            <div style="float: right; padding: 3px 0">
-              <!-- @click="handleCopy(item)" -->
-              <!-- id="copyBtn"
+    <div class="box-card-layout">
+
+      <el-row :gutter="20">
+        <el-col :span="12"
+                v-for="(item, index) in list"
+                :key="item.id">
+          <el-card class="box-card"
+                   :id="`boxCard${item.id}`"
+                   :style="{ height: `${boxCardsMaxHeight[index]}px`}">
+            <div slot="header"
+                 class="clearfix">
+              <span>{{item.name}}</span>
+              <div style="float: right; padding: 3px 0">
+                <!-- @click="handleCopy(item)" -->
+                <!-- id="copyBtn"
                          data-clipboard-action="copy"
                          data-clipboard-target="#target" -->
-              <el-button type="text"
-                         size="small"
-                         id="copyBtn"
-                         data-clipboard-action="copy"
-                         @click="handleCopy(item)">复制</el-button>
-              <el-button type="text"
-                         size="small"
-                         @click="handleUpdate(item)">编辑</el-button>
-              <el-popconfirm title="这是一段内容确定删除吗？"
-                             @onConfirm="handleDestory(item)">
-                <el-button slot="reference"
-                           type="text"
-                           size="small">删除</el-button>
-              </el-popconfirm>
+                <el-button type="text"
+                           size="small"
+                           id="copyBtn"
+                           data-clipboard-action="copy"
+                           @click="handleCopy(item)">复制</el-button>
+                <el-button type="text"
+                           size="small"
+                           @click="handleUpdate(item)">编辑</el-button>
+                <el-popconfirm title="这是一段内容确定删除吗？"
+                               @onConfirm="handleDestory(item)">
+                  <el-button slot="reference"
+                             type="text"
+                             size="small">删除</el-button>
+                </el-popconfirm>
+              </div>
             </div>
-          </div>
-          <div class="text item">
-            <!-- {{item.description.split('\n')}} -->
-            <p v-for="(descriptionItem, descriptionIndex) in item.description.split('\n')"
-               :key="descriptionIndex">
-              {{descriptionItem}}
-            </p>
-            <!-- <el-input v-model="item.description"
+            <div class="text item">
+              <!-- {{item.description.split('\n')}} -->
+              <p v-for="(descriptionItem, descriptionIndex) in item.description.split('\n')"
+                 :key="descriptionIndex">
+                {{descriptionItem}}
+              </p>
+              <!-- <el-input v-model="item.description"
                       clearable
                       type="textarea"
                       :rows="20"
                       id="target"
                       class="target"
                       ></el-input> -->
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+
+    </div>
 
     <div class="block">
       <el-pagination class="paging"
@@ -162,6 +168,9 @@ export default {
       },
       dialogUserEditor: false,
       filename: '项目管理',
+      boxCardsArr: [], // 一维数组
+      boxCards2Arr: [], // 二维数组
+      boxCardsMaxHeight: [],
     }
   },
   computed: {
@@ -174,9 +183,33 @@ export default {
   },
   methods: {
     init() {
-      this.fetchIndex()
+      this.fetchIndex(() => {
+        console.log('this.list', this.list)
+        this.$nextTick(() => {
+          this.list.map((item) => {
+            let boxCards = document.querySelector(`#boxCard${item.id}`);
+            console.log(`boxCard`, boxCards.clientHeight)
+            this.boxCardsArr.push(boxCards.clientHeight)
+
+            console.log('this.boxCardsArr', this.boxCardsArr)
+            let boxCards2Arr = this.to2Arr(2, this.boxCardsArr);
+
+            let boxCardsMaxHeight = [];
+            boxCards2Arr.map((to2ArrItem) => {
+              let itemMaxLength = Math.ceil((Math.max.apply(null, to2ArrItem)));
+              let itemMaxLength2 = Math.ceil((Math.max.apply(null, to2ArrItem)));
+              boxCardsMaxHeight.push(itemMaxLength)
+              boxCardsMaxHeight.push(itemMaxLength2)
+            });
+
+            this.boxCardsMaxHeight = boxCardsMaxHeight;
+
+            console.log(`boxCards2Arr`, boxCardsMaxHeight)
+          })
+        })
+      })
     },
-    fetchIndex() {
+    fetchIndex(callback) {
       this.listLoading = true
       const query = this.$route.query || {}
       // 页码当前页设置
@@ -195,7 +228,25 @@ export default {
         this.list = response.data
         this.total = response.total;
         this.listLoading = false
+        callback && callback()
       })
+    },
+    // 转二维数组
+    to2Arr(num, arr) {
+      // var num = 4;//每个子数组里的元素个数
+      var num = num || 1;
+      // var arr = [1,4,5,6,34,34,67,895,2456,87,9,5,23,884,56];
+      var Arr = new Array(Math.ceil(arr.length / num));
+      for (var i = 0; i < Arr.length; i++) {
+        Arr[i] = new Array();
+        for (var j = 0; j < num; j++) {
+          Arr[i][j] = 0;
+        }
+      }
+      for (var i = 0; i < arr.length; i++) {
+        Arr[parseInt(i / num)][i % num] = arr[i];
+      }
+      return Arr;
     },
     // 分页大小
     handleSizeChange(val) {
@@ -301,14 +352,14 @@ export default {
     handleCopy(item) {
       let self = this;
       new ClipboardJS('#copyBtn', {
-          text: function(trigger) {
-            console.log('trigger', trigger)
-              return item.description;
-          }
+        text: function (trigger) {
+          console.log('trigger', trigger)
+          return item.description;
+        }
       });
       this.$notify.success({
-          title: '提示',
-          message: '复制成功'
+        title: '提示',
+        message: '复制成功'
       })
     },
   },
@@ -336,13 +387,15 @@ export default {
   .clearfix:after {
     clear: both;
   }
-
+  .box-card-layout{
+    margin-top: 20px;
+  }
   .box-card {
     // width: 480px;
     // width: 50%;
     margin-bottom: 20px;
   }
-  .target{
+  .target {
     // display: none;
     // position: absolute;
     // left: -9999px;
