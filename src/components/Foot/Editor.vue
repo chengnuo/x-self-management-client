@@ -39,7 +39,11 @@
               <MarkdownEditor ref="markdownEditor"
                               v-model="ruleForm.description"
                               :language="language"
-                              height="300px" />
+                              height="580px"
+                              :options="{
+                                exts: ['scrollSync']
+                              }"
+                               />
             </div>
 
             <!-- <el-button style="margin-top:80px;"
