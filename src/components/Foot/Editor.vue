@@ -3,9 +3,12 @@
   <div class="footEditor">
     <el-dialog :title="`${listItem.id?'编辑':'新增'}`"
                :visible.sync="dialogVisible"
-               width="600px"
+               width="100%"
+               height="100%"
                :before-close="handleClose"
-               @open="init">
+               @open="init"
+               class="dialog"
+               >
       <div>
         <el-form :model="ruleForm"
                  :rules="rules"
@@ -18,18 +21,41 @@
             <el-input v-model="ruleForm.name"
                       clearable></el-input>
           </el-form-item>
-          <el-form-item label="描述"
+          <!-- <el-form-item label="描述"
                         prop="description">
             <el-input v-model="ruleForm.description"
                       clearable
                       type="textarea"
                       :rows="3"></el-input>
+          </el-form-item> -->
+          <el-form-item label="描述" prop="description">
+            <div class="editor-container">
+              <!-- <el-tag class="tag-title">
+                I18n:
+              </el-tag>
+              <el-alert :closable="false"
+                        title="You can change the language of the admin system to see the effect"
+                        type="success" /> -->
+              <MarkdownEditor ref="markdownEditor"
+                              v-model="ruleForm.description"
+                              :language="language"
+                              height="300px" />
+            </div>
+
+            <!-- <el-button style="margin-top:80px;"
+                       type="primary"
+                       icon="el-icon-document"
+                       @click="getHtml">
+              Get HTML
+            </el-button>
+            <div v-html="html" /> -->
           </el-form-item>
           <el-form-item label="url"
                         prop="url">
             <el-input v-model="ruleForm.url"
                       clearable></el-input>
           </el-form-item>
+          
           <el-form-item>
             <el-button type="primary"
                        @click="submitForm('ruleForm')">立即创建</el-button>
@@ -38,11 +64,14 @@
         </el-form>
       </div>
     </el-dialog>
+
   </div>
 </template>
 
 <script>
 import { create, update } from '@/api/foot'
+
+import MarkdownEditor from '@/components/MarkdownEditor'
 
 export default {
   name: 'FootEditor',
@@ -55,6 +84,9 @@ export default {
       type: Object,
       default: {}
     },
+  },
+  components: {
+    MarkdownEditor,
   },
   data() {
     return {
@@ -73,7 +105,13 @@ export default {
         url: [
           { required: true, message: '请输入url', trigger: 'blur' },
         ],
-      }
+      },
+      html: '',
+      languageTypeList: {
+        'en': 'en_US',
+        'zh': 'zh_CN',
+        'es': 'es_ES'
+      },
     }
   },
   computed: {
@@ -84,6 +122,9 @@ export default {
       set(val) {
         this.$emit('update:visible', val)
       }
+    },
+    language() {
+      return this.languageTypeList['zh']
     }
   },
   created() {
@@ -113,7 +154,7 @@ export default {
       let ruleForm = Object.assign({}, this.ruleForm)
       create(ruleForm).then(response => {
         this.handleClose(); // 关闭弹出层
-        this.$emit('fetchIndex'); // 刷新列表
+        this.$emit('init'); // 刷新列表
       })
     },
     // 更新api
@@ -123,7 +164,7 @@ export default {
       })
       update(ruleForm).then(response => {
         this.handleClose(); // 关闭弹出层
-        this.$emit('fetchIndex'); // 刷新列表
+        this.$emit('init'); // 刷新列表
       })
     },
     // 关闭弹出层
@@ -148,7 +189,11 @@ export default {
     resetForm(formName) {
       this.clearData();
       this.$refs[formName].resetFields();
-    }
+    },
+    getHtml() {
+      this.html = this.$refs.markdownEditor.getHtml()
+      console.log(this.html)
+    },
   },
 }
 </script>
@@ -156,5 +201,11 @@ export default {
 <style lang="scss" scoped>
 .footEditor {
   padding: 20px;
+  .dialog{
+    /deep/ .el-dialog{
+      margin-top: 0 !important;
+      height: 100% !important;
+    }
+  }
 }
 </style>

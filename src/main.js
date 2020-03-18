@@ -16,6 +16,12 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+// markdown样式 start
+import 'codemirror/lib/codemirror.css' // codemirror
+import 'tui-editor/dist/tui-editor.css' // editor ui
+import 'tui-editor/dist/tui-editor-contents.css' // editor content
+// markdown样式 end
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

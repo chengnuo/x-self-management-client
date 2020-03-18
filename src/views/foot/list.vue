@@ -41,7 +41,7 @@
                      layout="total, sizes, prev, pager, next, jumper"
                      :total="total" />
     </div>
-    <el-table :data="list"
+    <!-- <el-table :data="list"
               style="width: 100%">
       <el-table-column label="操作"
                        width="100">
@@ -63,12 +63,12 @@
                        width="100" />
       <el-table-column prop="description"
                        label="描述"
-                       width="500" >
-                       <template slot-scope="scope">
-                         <div :id="`description${scope.row.id}`">
-                           {{scope.row.description}}
-                         </div>
-                       </template>
+                       width="500">
+        <template slot-scope="scope">
+          <div :id="`description${scope.row.id}`">
+            {{scope.row.description}}
+          </div>
+        </template>
       </el-table-column>
       <el-table-column prop="url"
                        label="地址">
@@ -88,7 +88,51 @@
                        label="新增时间" />
       <el-table-column prop="updatedAt"
                        label="更新时间" />
-    </el-table>
+    </el-table> -->
+
+
+    <div class="box-card-layout">
+
+      <el-row :gutter="20">
+        <el-col :span="24"
+                v-for="(item, index) in list"
+                :key="item.id">
+          <el-card class="box-card"
+                   
+                   >
+            <div slot="header"
+                 class="clearfix">
+              <span>{{item.name}}</span>
+              <div style="float: right; padding: 3px 0" >
+                <el-button type="text"
+                           size="small"
+                           id="copyBtn"
+                           data-clipboard-action="copy"
+                           @click="handleCopy(item)">复制</el-button>
+                <el-button type="text"
+                           size="small"
+                           @click="handleUpdate(item)">编辑</el-button>
+                <el-popconfirm title="这是一段内容确定删除吗？"
+                               @onConfirm="handleDestory(item)">
+                  <el-button slot="reference"
+                             type="text"
+                             size="small">删除</el-button>
+                </el-popconfirm>
+              </div>
+            </div>
+            <div class="text item" :id="`boxCard${item.id}`">
+              markdown查看
+              <!-- <p v-for="(descriptionItem, descriptionIndex) in item.description.split('\n')"
+                 :key="descriptionIndex">
+                {{descriptionItem}}
+              </p> -->
+              
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+
+    </div>
 
     <div class="block">
       <el-pagination class="paging"
@@ -103,32 +147,11 @@
     </div>
     <!-- 编辑 -->
     <UserEditor :visible.sync="dialogUserEditor"
-                @fetchIndex="fetchIndex"
+                @init="init"
                 :listItem="listItem" />
 
-    <!-- <div class="editor-container">
-      <el-tag class="tag-title">
-        I18n:
-      </el-tag>
-      <el-alert :closable="false"
-                title="You can change the language of the admin system to see the effect"
-                type="success" />
-      <MarkdownEditor ref="markdownEditor"
-                       v-model="content4"
-                       :language="language"
-                       height="300px"
-                        />
-    </div>
 
-    <el-button style="margin-top:80px;"
-               type="primary"
-               icon="el-icon-document"
-               @click="getHtml">
-      Get HTML
-    </el-button>
-    <div v-html="html" />
-
-    <div id="test">1</div> -->
+    
 
   </div>
 </template>
@@ -138,27 +161,16 @@
 
 import { index, destroy, show } from '@/api/foot'
 import UserEditor from '@/components/Foot/Editor'
-
-
-import MarkdownEditor from '@/components/MarkdownEditor'
-
 import Editor from 'tui-editor'
 import Viewer from 'tui-editor/dist/tui-editor-Viewer';
+import ClipboardJS from 'clipboard';
 
-const content = `
-**This is test**
-
-* vue
-* element
-* webpack
-
-`
 
 export default {
   name: 'FootList',
   components: {
     UserEditor,
-    MarkdownEditor,
+    // MarkdownEditor,
   },
   data() {
     return {
@@ -174,7 +186,6 @@ export default {
       },
       dialogUserEditor: false,
       filename: 'foot',
-      content4: content,
       html: '',
       languageTypeList: {
         'en': 'en_US',
@@ -188,31 +199,25 @@ export default {
       return this.languageTypeList['zh']
     }
   },
-  mounted () {
-    // this.init()
-    this.fetchIndex(()=>{
-      console.log(this.list)
-      setTimeout(() => {
-        this.list.map((item)=>{
-          var editor = new Viewer({
-            el: document.querySelector(`#description${item.id}`),
-            height: '300px',
-            initialValue: item.description,
-          });
-          return true
-        })
-        
-      }, 1);
-      
-      
-    })
-      
-    
-    
+  mounted() {
+    this.init()
   },
   methods: {
     init() {
-      this.fetchIndex()
+      this.fetchIndex(() => {
+        console.log(this.list)
+        setTimeout(() => {
+          this.list.map((item) => {
+            var editor = new Viewer({
+              el: document.querySelector(`#boxCard${item.id}`),
+              height: '300px',
+              initialValue: item.description,
+            });
+            return true
+          })
+
+        }, 1);
+      })
     },
     getHtml() {
       this.html = this.$refs.markdownEditor.getHtml()
@@ -322,6 +327,20 @@ export default {
         }
       }))
     },
+    // 复制
+    handleCopy(item) {
+      let self = this;
+      new ClipboardJS('#copyBtn', {
+        text: function (trigger) {
+          console.log('trigger', trigger)
+          return item.description;
+        }
+      });
+      this.$notify.success({
+        title: '提示',
+        message: '复制成功'
+      })
+    },
   },
 }
 </script>
@@ -329,5 +348,11 @@ export default {
 <style lang="scss" scoped>
 .footList {
   padding: 20px;
+  .box-card-layout{
+    margin-top: 20px;
+  }
+  .box-card{
+    margin-bottom: 20px;
+  }
 }
 </style>
