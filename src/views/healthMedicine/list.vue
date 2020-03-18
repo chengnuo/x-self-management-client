@@ -1,6 +1,6 @@
 <!-- 用户模块-列表 -->
 <template>
-  <div class="footList">
+  <div class="healthMedicineList">
     <el-form :inline="true"
              ref="form"
              :model="listQuery"
@@ -159,15 +159,15 @@
 <script>
 
 
-import { index, destroy, show } from '@/api/foot'
-import UserEditor from '@/components/Foot/Editor'
+import { index, destroy, show } from '@/api/healthMedicine'
+import UserEditor from '@/components/HealthMedicine/Editor'
 import Editor from 'tui-editor'
 import Viewer from 'tui-editor/dist/tui-editor-Viewer';
 import ClipboardJS from 'clipboard';
 
 
 export default {
-  name: 'FootList',
+  name: 'HealthMedicineList',
   components: {
     UserEditor,
     // MarkdownEditor,
@@ -185,7 +185,7 @@ export default {
         name: '',
       },
       dialogUserEditor: false,
-      filename: 'foot',
+      filename: 'healthMedicine',
       html: '',
       languageTypeList: {
         'en': 'en_US',
@@ -346,7 +346,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.footList {
+.healthMedicineList {
   padding: 20px;
   .box-card-layout{
     margin-top: 20px;

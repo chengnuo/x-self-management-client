@@ -1,6 +1,6 @@
 <!-- 用户模块-编辑 -->
 <template>
-  <div class="footEditor">
+  <div class="healthMedicineEditor">
     <el-dialog :title="`${listItem.id?'编辑':'新增'}`"
                :visible.sync="dialogVisible"
                width="100%"
@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import { create, update } from '@/api/foot'
+import { create, update } from '@/api/healthMedicine'
 
 import MarkdownEditor from '@/components/MarkdownEditor'
 
@@ -203,7 +203,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.footEditor {
+.healthMedicineEditor {
   padding: 20px;
   .dialog{
     /deep/ .el-dialog{

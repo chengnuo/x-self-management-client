@@ -6,7 +6,7 @@
              :model="listQuery"
              label-width="80px"
              @submit.native.prevent="onSubmit">
-      <el-form-item label="用户名称">
+      <el-form-item label="名称">
         <el-input v-model.trim="listQuery.name"
                   size="small"
                   clearable></el-input>
