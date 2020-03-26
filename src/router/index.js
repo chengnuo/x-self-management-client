@@ -153,6 +153,26 @@ export const constantRoutes = [
     }]
   },
 
+  {
+    path: '/softwareTest',
+    component: Layout,
+    redirect: '/softwareTest/list',
+    name: 'SoftwareTest',
+    meta: {
+      title: '健康医药管理',
+      icon: ''
+    },
+    children: [{
+      path: 'list',
+      name: 'SoftwareTestList',
+      component: () => import('@/views/softwareTest/list'),
+      meta: {
+        title: '健康医药',
+        icon: 'el-icon-tickets'
+      }
+    }]
+  },
+
   // {
   //   path: '/example',
   //   component: Layout,
