@@ -159,7 +159,7 @@ export const constantRoutes = [
     redirect: '/softwareTest/list',
     name: 'SoftwareTest',
     meta: {
-      title: '健康医药管理',
+      title: '软件考试',
       icon: ''
     },
     children: [{
@@ -167,7 +167,7 @@ export const constantRoutes = [
       name: 'SoftwareTestList',
       component: () => import('@/views/softwareTest/list'),
       meta: {
-        title: '健康医药',
+        title: '软件考试',
         icon: 'el-icon-tickets'
       }
     }]
