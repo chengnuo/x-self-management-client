@@ -128,6 +128,12 @@
               </p> -->
               
             </div>
+            <div>
+              参考地址：
+              <div v-for="(item, index) in item.urlSplit" :key="index">
+                <el-link :href="item" type="primary" target="_blank">{{item}}</el-link>
+              </div>
+            </div>
           </el-card>
         </el-col>
       </el-row>
@@ -239,8 +245,13 @@ export default {
         limit: query.limit,
       })
       index(listQuery).then(response => {
-        this.list = response.data
-        this.total = response.total;
+        this.list = response.data.list.map((item)=>{
+          return {
+            ...item,
+            urlSplit: item.url.split(',')
+          }
+        })
+        this.total = response.data.total;
         this.listLoading = false
         callback && callback();
       })

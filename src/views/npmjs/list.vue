@@ -157,7 +157,7 @@ export default {
         limit: query.limit,
       })
       index(listQuery).then(response => {
-        this.list = response.data
+        this.list = response.data.list;
         this.total = response.total;
         this.listLoading = false
       })
